@@ -69,6 +69,7 @@ pub fn transfer_from_owner_to_vault_v2<'info>(
     ];
 
     // TransferHook extension
+    #[cfg(feature = "token-2022")]
     if let Some(hook_program_id) = get_transfer_hook_program_id(token_mint)? {
         if transfer_hook_accounts.is_none() {
             return Err(ErrorCode::NoExtraAccountsForTransferHook.into());
@@ -151,6 +152,7 @@ pub fn transfer_from_vault_to_owner_v2<'info>(
     ];
 
     // TransferHook extension
+    #[cfg(feature = "token-2022")]
     if let Some(hook_program_id) = get_transfer_hook_program_id(token_mint)? {
         if transfer_hook_accounts.is_none() {
             return Err(ErrorCode::NoExtraAccountsForTransferHook.into());
@@ -175,6 +177,7 @@ pub fn transfer_from_vault_to_owner_v2<'info>(
     Ok(())
 }
 
+#[cfg(feature = "token-2022")]
 fn get_transfer_hook_program_id(token_mint: &InterfaceAccount<'_, Mint>) -> Result<Option<Pubkey>> {
     let token_mint_info = token_mint.to_account_info();
     if *token_mint_info.owner == Token::id() {
@@ -187,6 +190,11 @@ fn get_transfer_hook_program_id(token_mint: &InterfaceAccount<'_, Mint>) -> Resu
     Ok(extension::transfer_hook::get_program_id(
         &token_mint_unpacked,
     ))
+}
+
+#[cfg(not(feature = "token-2022"))]
+fn get_transfer_hook_program_id(_token_mint: &InterfaceAccount<'_, Mint>) -> Result<Option<Pubkey>> {
+    Ok(None)
 }
 
 fn is_transfer_memo_required(token_account: &InterfaceAccount<'_, TokenAccount>) -> Result<bool> {
