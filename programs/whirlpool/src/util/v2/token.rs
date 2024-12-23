@@ -14,6 +14,7 @@ use anchor_spl::token_2022::spl_token_2022::{
     state::AccountState,
 };
 use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface};
+#[cfg(feature = "token-2022")]
 use spl_transfer_hook_interface;
 
 #[allow(clippy::too_many_arguments)]
